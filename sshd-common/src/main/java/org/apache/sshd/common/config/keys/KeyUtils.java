@@ -1013,9 +1013,24 @@ public final class KeyUtils {
             return SecurityUtils.compareEDDSAPPublicKeys(k1, k2);
         } else if ((k1 instanceof SkED25519PublicKey) && (k2 instanceof SkED25519PublicKey)) {
             return compareSkEd25519Keys(SkED25519PublicKey.class.cast(k1), SkED25519PublicKey.class.cast(k2));
-        } else {
-            return false; // either key is null or not of same class
         }
+        else if ((k1 instanceof OpenSshCertificate) && (k2 instanceof OpenSshCertificate)) {
+            final OpenSshCertificate cert1 = (OpenSshCertificate) k1;
+            final OpenSshCertificate cert2 = (OpenSshCertificate) k2;
+
+            if ("ssh-rsa-cert-v01@openssh.com".equals(cert1.getKeyType())
+              && "ssh-rsa-cert-v01@openssh.com".equals(cert2.getKeyType())) {
+                return true;
+//                return compareKeys((PrivateKey) cert1, (PrivateKey) cert2);
+            }
+
+            System.out.println("here");
+
+
+//            return compareRSAKeys(RSAPublicKey.class.cast(k1), RSAPublicKey.class.cast(k2));
+        }
+
+        return false;
     }
 
     public static PublicKey recoverPublicKey(PrivateKey key) throws GeneralSecurityException {

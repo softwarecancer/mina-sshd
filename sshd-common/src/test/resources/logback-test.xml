@@ -19,29 +19,29 @@
 
 <!DOCTYPE configuration>
 <configuration debug="true">
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} | %-5.5p | %-16.16t | %-32.32c{1} | %-64.64C %4L | %m%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} | %-5.5p | %-16.16t | %-32.32c{1} | %-64.64C %4L | %m%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <!--
-            TODO see if can use a LoggerStartupListener
-            as described in https://stackoverflow.com/questions/1975939/read-environment-variables-from-logback-configuration-file 
-         -->
-        <file>target/sshd-tests.log</file>
-        <append>true</append>
-        <!-- set immediateFlush to false for much higher logging throughput -->
-        <immediateFlush>false</immediateFlush>
-        <encoder>
-            <pattern>%d | %-5.5p | %-16.16t | %-32.32c{1} | %-64.64C %4L | %m%n</pattern>
-        </encoder>
-    </appender>
-  
-        <!-- root level can be changed via -Dorg.apache.sshd.test.root.log.level=XXX -->
-    <root level="INFO">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
-    </root>
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <!--
+        TODO see if can use a LoggerStartupListener
+        as described in https://stackoverflow.com/questions/1975939/read-environment-variables-from-logback-configuration-file
+     -->
+    <file>target/sshd-tests.log</file>
+    <append>true</append>
+    <!-- set immediateFlush to false for much higher logging throughput -->
+    <immediateFlush>false</immediateFlush>
+    <encoder>
+      <pattern>%d | %-5.5p | %-16.16t | %-32.32c{1} | %-64.64C %4L | %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- root level can be changed via -Dorg.apache.sshd.test.root.log.level=XXX -->
+  <root level="TRACE">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </root>
 </configuration>
