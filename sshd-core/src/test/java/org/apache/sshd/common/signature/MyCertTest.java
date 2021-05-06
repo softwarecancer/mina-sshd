@@ -25,8 +25,8 @@ public class MyCertTest {
   public void test() throws Exception {
 
 
-    final File certFile = new File("/Users/asherwin/repos/ksshole/src/test/resources/ssh/keypairs/user01_rsa_2048-cert.pub");
-    final File pubKeyFile = new File("/Users/asherwin/repos/ksshole/src/test/resources/ssh/keypairs/user01_rsa_2048.pub");
+    final File certFile = new File("/Users/alec.stewart/personal/repos/docker-sshd-testing/keys/user/user01_rsa_2048-cert.pub");
+    final File pubKeyFile = new File("/Users/alec.stewart/personal/repos/docker-sshd-testing/keys/user/user01_rsa_2048.pub");
 
     try (final FileInputStream certInputStream = new FileInputStream(certFile); final FileInputStream pubKeyInputStream = new FileInputStream(pubKeyFile)) {
 
@@ -42,7 +42,7 @@ public class MyCertTest {
       final PublicKeyEntry pubKeyPublicKeyEntry = PublicKeyEntry.parsePublicKeyEntry(pubKeyLine);
       final PublicKey pubKeyPublicKey = pubKeyPublicKeyEntry.resolvePublicKey(null, null, null);
 
-      final Path path = new File("/Users/asherwin/repos/ksshole/src/test/resources/ssh/keypairs").toPath();
+      final Path path = new File("/Users/alec.stewart/personal/repos/docker-sshd-testing/keys/user").toPath();
 
       final FileKeyPairProvider keyPairProvider = new FileKeyPairProvider(path.resolve("user01_rsa_2048"));
 

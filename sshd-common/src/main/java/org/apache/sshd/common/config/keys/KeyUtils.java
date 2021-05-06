@@ -1015,19 +1015,13 @@ public final class KeyUtils {
             return compareSkEd25519Keys(SkED25519PublicKey.class.cast(k1), SkED25519PublicKey.class.cast(k2));
         }
         else if ((k1 instanceof OpenSshCertificate) && (k2 instanceof OpenSshCertificate)) {
-            final OpenSshCertificate cert1 = (OpenSshCertificate) k1;
-            final OpenSshCertificate cert2 = (OpenSshCertificate) k2;
-
-            if ("ssh-rsa-cert-v01@openssh.com".equals(cert1.getKeyType())
-              && "ssh-rsa-cert-v01@openssh.com".equals(cert2.getKeyType())) {
-                return true;
-//                return compareKeys((PrivateKey) cert1, (PrivateKey) cert2);
-            }
-
-            System.out.println("here");
-
-
-//            return compareRSAKeys(RSAPublicKey.class.cast(k1), RSAPublicKey.class.cast(k2));
+            // you won't have a CA pub key that is also a certificate - i think?
+            // and this has the desired result of only keys that match actually comparing?
+            // or do we also need to check something else?
+            return compareKeys(
+              OpenSshCertificate.class.cast(k1).getCaPubKey(),
+              OpenSshCertificate.class.cast(k2).getCaPubKey()
+            );
         }
 
         return false;

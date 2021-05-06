@@ -221,6 +221,7 @@ public class DHGClient extends AbstractDHClientKeyExchange {
                     "KeyExchange CA signature verification failed for key type=" + keyAlg + " of key ID=" + keyId);
         }
 
+        // why do we check that the cert type is host here?
         if (openSshKey.getType() != OpenSshCertificate.SSH_CERT_TYPE_HOST) {
             throw new SshException(
                     SshConstants.SSH2_DISCONNECT_KEY_EXCHANGE_FAILED,

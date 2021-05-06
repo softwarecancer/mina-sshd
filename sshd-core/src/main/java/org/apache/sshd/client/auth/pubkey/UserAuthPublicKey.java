@@ -38,6 +38,7 @@ import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.RuntimeSshException;
 import org.apache.sshd.common.SshConstants;
 import org.apache.sshd.common.config.keys.KeyUtils;
+import org.apache.sshd.common.config.keys.OpenSshCertificate;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
 import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.common.signature.SignatureFactoriesHolder;
@@ -289,6 +290,7 @@ public class UserAuthPublicKey extends AbstractUserAuth implements SignatureFact
                     "processAuthDataRequest({})[{}][{}]: signing with algorithm {}", //$NON-NLS-1$
                     session, service, name, algo);
         }
+
         byte[] sig = appendSignature(session, service, name, username, algo, pubKey, buffer);
         PublicKeyAuthenticationReporter reporter = session.getPublicKeyAuthenticationReporter();
         if (reporter != null) {
@@ -302,11 +304,13 @@ public class UserAuthPublicKey extends AbstractUserAuth implements SignatureFact
     protected byte[] appendSignature(
             ClientSession session, String service, String name, String username, String algo, PublicKey key, Buffer buffer)
             throws Exception {
+
         byte[] id = session.getSessionId();
         Buffer bs = new ByteArrayBuffer(
                 id.length + username.length() + service.length() + name.length()
                                         + algo.length() + ByteArrayBuffer.DEFAULT_SIZE + Long.SIZE,
                 false);
+
         bs.putBytes(id);
         bs.putByte(SshConstants.SSH_MSG_USERAUTH_REQUEST);
         bs.putString(username);
@@ -330,15 +334,21 @@ public class UserAuthPublicKey extends AbstractUserAuth implements SignatureFact
             throw new RuntimeSshException(e);
         }
 
+        String signatureAlgo = algo;
+        if (key instanceof OpenSshCertificate) {
+            // the signature needs to send the signature algo when the key is a certificate
+            signatureAlgo = ((OpenSshCertificate) key).getSignatureAlg();
+        }
+
         if (log.isTraceEnabled()) {
             log.trace("appendSignature({})[{}] name={}, key type={}, fingerprint={} - verification data={}",
                     session, service, name, algo, KeyUtils.getFingerPrint(key), BufferUtils.toHex(contents));
-            log.trace("appendSignature({})[{}] name={}, key type={}, fingerprint={} - generated signature={}",
-                    session, service, name, algo, KeyUtils.getFingerPrint(key), BufferUtils.toHex(sig));
+            log.trace("appendSignature({})[{}] name={}, signature type={}, fingerprint={} - generated signature={}",
+                    session, service, name, signatureAlgo, KeyUtils.getFingerPrint(key), BufferUtils.toHex(sig));
         }
 
         bs.clear();
-        bs.putString(algo);
+        bs.putString(signatureAlgo);
         bs.putBytes(sig);
         buffer.putBytes(bs.array(), bs.rpos(), bs.available());
         return sig;
